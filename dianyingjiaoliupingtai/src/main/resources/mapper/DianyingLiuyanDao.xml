@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DianyingLiuyanDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.dianying_id as dianyingId
+        ,a.yonghu_id as yonghuId
+        ,a.dianying_liuyan_text as dianyingLiuyanText
+        ,a.insert_time as insertTime
+        ,a.reply_text as replyText
+        ,a.update_time as updateTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.DianyingLiuyanView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,dianying.dianying_name as dianyingName
+        ,dianying.dianying_types as dianyingTypes
+        ,dianying.dianying_photo as dianyingPhoto
+        ,dianying.dianying_video as dianyingVideo
+        ,dianying.dianying_shijian as dianyingShijian
+        ,dianying.dianying_faxing as dianyingFaxing
+        ,dianying.dianying_add as dianyingAdd
+        ,dianying.dianying_gs as dianyingGs
+        ,dianying.chuchang_time as chuchangTime
+        ,dianying.dianying_sc as dianyingSc
+        ,dianying.dianying_daoyan as dianyingDaoyan
+        ,dianying.dianying_new_money as dianyingNewMoney
+        ,dianying.zan_number as zanNumber
+        ,dianying.cai_number as caiNumber
+        ,dianying.dianying_content as dianyingContent
+        ,dianying.dianying_delete as dianyingDelete
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_delete as yonghuDelete
+
+        FROM dianying_liuyan  a
+        left JOIN dianying dianying ON a.dianying_id = dianying.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.dianyingId != null and params.dianyingId != ''">
+                and (
+                    a.dianying_id = #{params.dianyingId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test=" params.dianyingLiuyanText != '' and params.dianyingLiuyanText != null and params.dianyingLiuyanText != 'null' ">
+                and a.dianying_liuyan_text like CONCAT('%',#{params.dianyingLiuyanText},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+            <if test=" params.replyText != '' and params.replyText != null and params.replyText != 'null' ">
+                and a.reply_text like CONCAT('%',#{params.replyText},'%')
+            </if>
+            <if test=" params.updateTimeStart != '' and params.updateTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.update_time) >= UNIX_TIMESTAMP(#{params.updateTimeStart}) ]]>
+            </if>
+            <if test=" params.updateTimeEnd != '' and params.updateTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.update_time) <= UNIX_TIMESTAMP(#{params.updateTimeEnd}) ]]>
+            </if>
+            <if test="params.updateTime != null and params.updateTime != ''">
+                and a.update_time = #{params.updateTime}
+            </if>
+
+                <!-- 判断电影信息的id不为空 -->
+            <if test=" params.dianyingIdNotNull != '' and params.dianyingIdNotNull != null and params.dianyingIdNotNull != 'null' ">
+                and a.dianying_id IS NOT NULL
+            </if>
+            <if test=" params.dianyingName != '' and params.dianyingName != null and params.dianyingName != 'null' ">
+                and dianying.dianying_name like CONCAT('%',#{params.dianyingName},'%')
+            </if>
+            <if test="params.dianyingTypes != null  and params.dianyingTypes != ''">
+                and dianying.dianying_types = #{params.dianyingTypes}
+            </if>
+
+            <if test=" params.dianyingVideo != '' and params.dianyingVideo != null and params.dianyingVideo != 'null' ">
+                and dianying.dianying_video like CONCAT('%',#{params.dianyingVideo},'%')
+            </if>
+            <if test=" params.dianyingShijian != '' and params.dianyingShijian != null and params.dianyingShijian != 'null' ">
+                and dianying.dianying_shijian like CONCAT('%',#{params.dianyingShijian},'%')
+            </if>
+            <if test=" params.dianyingFaxing != '' and params.dianyingFaxing != null and params.dianyingFaxing != 'null' ">
+                and dianying.dianying_faxing like CONCAT('%',#{params.dianyingFaxing},'%')
+            </if>
+            <if test=" params.dianyingAdd != '' and params.dianyingAdd != null and params.dianyingAdd != 'null' ">
+                and dianying.dianying_add like CONCAT('%',#{params.dianyingAdd},'%')
+            </if>
+            <if test=" params.dianyingGs != '' and params.dianyingGs != null and params.dianyingGs != 'null' ">
+                and dianying.dianying_gs like CONCAT('%',#{params.dianyingGs},'%')
+            </if>
+            <if test=" params.chuchangTimeStart != '' and params.chuchangTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(dianying.chuchang_time) >= UNIX_TIMESTAMP(#{params.chuchangTimeStart}) ]]>
+            </if>
+            <if test=" params.chuchangTimeEnd != '' and params.chuchangTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(dianying.chuchang_time) <= UNIX_TIMESTAMP(#{params.chuchangTimeEnd}) ]]>
+            </if>
+            <if test="params.chuchangTime != null and params.chuchangTime != ''">
+                and a.chuchang_time = #{params.chuchangTime}
+            </if>
+            <if test=" params.dianyingSc != '' and params.dianyingSc != null and params.dianyingSc != 'null' ">
+                and dianying.dianying_sc like CONCAT('%',#{params.dianyingSc},'%')
+            </if>
+            <if test=" params.dianyingDaoyan != '' and params.dianyingDaoyan != null and params.dianyingDaoyan != 'null' ">
+                and dianying.dianying_daoyan like CONCAT('%',#{params.dianyingDaoyan},'%')
+            </if>
+            <if test="params.dianyingNewMoneyStart != null ">
+                <![CDATA[  and dianying.dianying_new_money >= #{params.dianyingNewMoneyStart}   ]]>
+            </if>
+            <if test="params.dianyingNewMoneyEnd != null ">
+                <![CDATA[  and dianying.dianying_new_money <= #{params.dianyingNewMoneyEnd}   ]]>
+            </if>
+            <if test="params.dianyingNewMoney != null and params.dianyingNewMoney != ''">
+                and a.dianying_new_money = #{params.dianyingNewMoney}
+            </if>
+            <if test="params.zanNumberStart != null  and params.zanNumberStart != '' ">
+                <![CDATA[  and dianying.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null  and params.zanNumberEnd != '' ">
+                <![CDATA[  and dianying.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+            <if test="params.zanNumber != null  and params.zanNumber != '' ">
+                and dianying.zan_number = #{params.zanNumber}
+            </if>
+            <if test="params.caiNumberStart != null  and params.caiNumberStart != '' ">
+                <![CDATA[  and dianying.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null  and params.caiNumberEnd != '' ">
+                <![CDATA[  and dianying.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+            <if test="params.caiNumber != null  and params.caiNumber != '' ">
+                and dianying.cai_number = #{params.caiNumber}
+            </if>
+            <if test=" params.dianyingContent != '' and params.dianyingContent != null and params.dianyingContent != 'null' ">
+                and dianying.dianying_content like CONCAT('%',#{params.dianyingContent},'%')
+            </if>
+            <if test="params.dianyingDeleteStart != null  and params.dianyingDeleteStart != '' ">
+                <![CDATA[  and dianying.dianying_delete >= #{params.dianyingDeleteStart}   ]]>
+            </if>
+            <if test="params.dianyingDeleteEnd != null  and params.dianyingDeleteEnd != '' ">
+                <![CDATA[  and dianying.dianying_delete <= #{params.dianyingDeleteEnd}   ]]>
+            </if>
+            <if test="params.dianyingDelete != null  and params.dianyingDelete != '' ">
+                and dianying.dianying_delete = #{params.dianyingDelete}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(dianying.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(dianying.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test="params.yonghuDeleteStart != null  and params.yonghuDeleteStart != '' ">
+                <![CDATA[  and yonghu.yonghu_delete >= #{params.yonghuDeleteStart}   ]]>
+            </if>
+            <if test="params.yonghuDeleteEnd != null  and params.yonghuDeleteEnd != '' ">
+                <![CDATA[  and yonghu.yonghu_delete <= #{params.yonghuDeleteEnd}   ]]>
+            </if>
+            <if test="params.yonghuDelete != null  and params.yonghuDelete != '' ">
+                and yonghu.yonghu_delete = #{params.yonghuDelete}
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
